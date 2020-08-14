@@ -1,4 +1,4 @@
 using PkgBenchmark
-import ElectrostaticTest
+import ParticleInCell
 
-benchmarkpkg(ElectrostaticTest)
+benchmarkpkg(ParticleInCell)
