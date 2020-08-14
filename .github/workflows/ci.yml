@@ -24,6 +24,8 @@ jobs:
 
   benchmark:
     name: Benchmarks
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v2
     - uses: julia-actions/setup-julia@v1
       with:
@@ -33,4 +35,6 @@ jobs:
         
   docs:
     name: Documentation
-    run: echo "TODO"
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "TODO"
