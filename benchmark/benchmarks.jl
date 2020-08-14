@@ -6,8 +6,8 @@ const SUITE = BenchmarkGroup()
 num_cells = 32
 num_guard_cells = 2
 simulation_length = 1.
-g1 = ParticleInCell.UniformGrid(32, 2, 1.)
-f1 = fill(0., ParticleInCell.total_cells(g1))
+g1 = UniformGrid(32, 2, 1.)
+f1 = fill(0., total_cells(g1))
 
 num_macros = 640
 p1  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macros]
@@ -15,14 +15,13 @@ p1  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macro
 num_cells = 128
 num_guard_cells = 2
 simulation_length = 1.
-g2 = ParticleInCell.UniformGrid(32, 2, 1.)
-f2 = fill(0., ParticleInCell.total_cells(g1))
+g2 = UniformGrid(32, 2, 1.)
+f2 = fill(0., total_cells(g1))
 
 num_macros = 10000
 p2  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macros]
 
-shape_functions = [ParticleInCell.shape_1st_order,
-                   ParticleInCell.shape_2nd_order]
+shape_functions = [shape_1st_order, shape_2nd_order]
 
 SUITE["scatter"] = BenchmarkGroup()
 for shape_function in shape_functions

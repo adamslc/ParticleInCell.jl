@@ -1,5 +1,3 @@
-using FFTW
-
 mutable struct FourierFieldSolve{FT, IT} <: IntegrationStep
     input_field_name::String
     output_field_name::String

@@ -11,7 +11,7 @@ using Test
     velocities = zeros(num_macroparticles)
     forces = zeros(num_macroparticles)
 
-    s = ParticleInCell.Species(physical_charge, physical_mass,
+    s = Species(physical_charge, physical_mass,
                                   physical_particles_per_macroparticle,
                                   positions, velocities, forces)
 
@@ -20,7 +20,7 @@ using Test
     @test s.macro_mass == physical_particles_per_macroparticle * physical_mass
 
     forces = zeros(num_macroparticles - 1)
-    @test_throws AssertionError ParticleInCell.Species(physical_charge, physical_mass,
+    @test_throws AssertionError Species(physical_charge, physical_mass,
                                   physical_particles_per_macroparticle,
                                   positions, velocities, forces)
 end

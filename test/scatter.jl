@@ -2,8 +2,7 @@ using ParticleInCell
 using Test
 
 @testset "Shape functions" begin
-    shape_functions = [ParticleInCell.shape_1st_order,
-                       ParticleInCell.shape_2nd_order]
+    shape_functions = [shape_1st_order, shape_2nd_order]
 
     for shape_function in shape_functions
         for offset in 0:0.1:1
@@ -21,14 +20,13 @@ end
     num_cells = 8
     num_guard_cells = 2
     simulation_length = 1.
-    grid = ParticleInCell.UniformGrid(num_cells, num_guard_cells, simulation_length)
-    field = fill(0., ParticleInCell.total_cells(grid))
+    grid = UniformGrid(num_cells, num_guard_cells, simulation_length)
+    field = fill(0., total_cells(grid))
 
     num_macros = 100
     positions  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macros]
 
-    shape_functions = [ParticleInCell.shape_1st_order,
-                       ParticleInCell.shape_2nd_order]
+    shape_functions = [shape_1st_order, shape_2nd_order]
 
     for shape_function in shape_functions
         field .= 0
@@ -51,15 +49,15 @@ end
 
 
     @testset "Integration test" begin
-        sim = ParticleInCell.Simulation(1.)
+        sim = Simulation(1.)
 
         num_cells = 32
         num_guard_cells = 5
         simulation_length = 1.
-        g = ParticleInCell.UniformGrid(num_cells, num_guard_cells, simulation_length)
+        g = UniformGrid(num_cells, num_guard_cells, simulation_length)
 
-        f = ParticleInCell.Field(g)
-        ParticleInCell.add_field!(sim, f, "f")
+        f = Field(g)
+        add_field!(sim, f, "f")
 
         charge = 1.
         mass = 1.
@@ -68,14 +66,14 @@ end
         positions  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macros]
         velocities = similar(positions)
         forces     = similar(positions)
-        s = ParticleInCell.Species(charge, mass, particles_per_macro, positions, velocities, forces)
-        ParticleInCell.add_species!(sim, s, "s")
+        s = Species(charge, mass, particles_per_macro, positions, velocities, forces)
+        add_species!(sim, s, "s")
 
-        sctg = ParticleInCell.ScatterChargeToGrid("s", "f")
-        ParticleInCell.add_integration_step!(sim, sctg)
+        sctg = ScatterChargeToGrid("s", "f")
+        add_integration_step!(sim, sctg)
 
-        ParticleInCell.setup!(sim)
-        ParticleInCell.step!(sim)
+        setup!(sim)
+        step!(sim)
 
         # Check charge conservation
         total_charge = num_macros * charge * particles_per_macro
