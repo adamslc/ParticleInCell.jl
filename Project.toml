@@ -1,0 +1,7 @@
+name = "ParticleInCell"
+uuid = "3e424eec-de35-11ea-286b-93bc20c5ff73"
+authors = ["Luke Adams <lukeclydeadams@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
