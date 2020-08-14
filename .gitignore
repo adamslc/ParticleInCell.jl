@@ -1,3 +1,4 @@
 *.cov
 *.mem
 Manifest.toml
+/.benchmarkci

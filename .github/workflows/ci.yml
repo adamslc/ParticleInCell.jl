@@ -31,10 +31,10 @@ jobs:
       with:
         version: 1.5
     - uses: julia-actions/julia-buildpkg@latest
-    - run: |
-        julia --project=benchmark -e 'import Pkg; Pkg.instantiate()'
-    - run: |
-        julia --project=benchmark benchmark/runbenchmarks.jl
+    - name: Instantiate
+      run: julia --project=benchmark -e 'import Pkg; Pkg.instantiate()'
+    - name: Run benchmarks
+      run: julia --project=benchmark benchmark/runbenchmarks.jl
 
   docs:
     name: Documentation

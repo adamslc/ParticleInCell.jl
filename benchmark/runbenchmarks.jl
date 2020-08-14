@@ -1,4 +1,6 @@
-using PkgBenchmark
-import ParticleInCell
+using BenchmarkCI
 
-benchmarkpkg(ParticleInCell)
+cd(joinpath(@__DIR__, "..")) do
+    BenchmarkCI.judge()
+    BenchmarkCI.displayjudgement()
+end
