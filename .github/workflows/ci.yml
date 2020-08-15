@@ -1,5 +1,9 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   # This workflow contains a single job called "build"
@@ -21,20 +25,6 @@ jobs:
     - uses: codecov/codecov-action@v1
       with:
         file: lcov.info
-
-  benchmark:
-    name: Benchmarks
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: julia-actions/setup-julia@v1
-      with:
-        version: 1.5
-    - uses: julia-actions/julia-buildpkg@latest
-    - name: Instantiate
-      run: julia --project=benchmark -e 'import Pkg; Pkg.instantiate()'
-    - name: Run benchmarks
-      run: julia --project=benchmark benchmark/runbenchmarks.jl
 
   docs:
     name: Documentation

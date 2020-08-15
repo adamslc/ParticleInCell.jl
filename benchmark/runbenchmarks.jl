@@ -2,5 +2,5 @@ using BenchmarkCI
 
 cd(joinpath(@__DIR__, "..")) do
     BenchmarkCI.judge()
-    BenchmarkCI.displayjudgement()
+    BenchmarkCI.postjudge()
 end
