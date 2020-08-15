@@ -32,7 +32,7 @@ function step!(step::ScatterChargeToGrid, sim::Simulation)
 end
 
 function scatter_charge_to_grid!(positions, field, grid, charge, shape_function)
-    sleep(0.001)
+    return
     for x in positions, (index, grid_pos) in grid
         field[index] += charge * shape_function((x - grid_pos) / cell_length(grid, index))
     end
