@@ -6,6 +6,7 @@ export UniformGrid, Field, Species, total_cells, cell_length
 export shape_1st_order, shape_2nd_order
 export ScatterChargeToGrid, GatherForcesFromGrid, SymplecticEulerPush
 export ConstrainSpecies, FourierFieldSolve, FiniteDifferenceToNodes
+export PrescribeField
 export Simulation, add_species!, add_field!, add_integration_step!, setup!, step!
 
 include("grid.jl")
@@ -75,6 +76,7 @@ function step!(sim::Simulation)
     for step in sim.integration_steps
         step!(step, sim)
     end
+    sim.time += sim.timestep
 end
 step!(::IntegrationStep, ::Simulation) = throw("No step method")
 
@@ -83,5 +85,6 @@ include("scatter.jl")
 include("gather.jl")
 include("particle_push.jl")
 include("field_solve.jl")
+include("prescribe_field.jl")
 
 end # module
