@@ -20,12 +20,20 @@ delta_x = grid_pos[2] - grid_pos[1]
 
 ims = []
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(14,18), sharex=True)
+fig, (ax1, ax11, ax2, ax3) = plt.subplots(4, 1, figsize=(14,18), sharex=True)
 fig.set_tight_layout(True)
 
 line1, = ax1.plot([0.5], [0], "bo", label="Electrons  ")
 ax1.set_xlim(0,1)
-ax1.set_ylim(-2e5,2e5)
+ax1.set_ylim(-1.2e5,1.2e5)
+
+hline1 = ax1.axhline( 10, color="blue", linewidth=1)
+hline2 = ax1.axhline(-10, color="blue", linewidth=1)
+
+line11, = ax11.plot([0.5], [0], "bo", label="Electrons  ")
+ax11.set_xlim(0,1)
+ax11.set_ylim(-1.2e5,1.2e5)
+ax11.set_yticklabels([])
 
 label_line, = ax1.plot([], [], " ", label="Hello")
 label_leg = ax1.legend(loc=1)
@@ -50,6 +58,7 @@ ax3.set_ylabel("Voltage")
 
 for g in grid_pos:
     ax1.axvline(g, color="black", linewidth=0.5, dashes=[10, 10])
+    ax11.axvline(g, color="black", linewidth=0.5, dashes=[10, 10])
     ax2.axvline(g, color="black", linewidth=0.5, dashes=[10, 10])
     ax3.axvline(g, color="black", linewidth=0.5, dashes=[10, 10])
 
@@ -66,8 +75,20 @@ def animate(i):
     grid_pos_hd = cur_dump_file["grid_pos_hd"][:]
     rho_hd = cur_dump_file["rho_hd"][:]
 
+    max_pos = max(velocities)
+    high_lim = max_pos + 1e4
+    low_lim  = max_pos - 1e4
+
+    ax11.set_ylim(low_lim, high_lim)
+
+    hline1.set_data([0, 1], [high_lim, high_lim])
+    hline2.set_data([0, 1], [low_lim,  low_lim])
+
     line1.set_xdata(positions)
     line1.set_ydata(velocities)
+
+    line11.set_xdata(positions)
+    line11.set_ydata(velocities)
 
     line2.set_xdata(grid_pos)
     line2.set_ydata(phi)
@@ -87,7 +108,7 @@ def animate(i):
     label_leg.remove()
     label_leg = ax1.legend(loc=1)
 
-    return line1, line2, line3, line4, line5, label_line, label_leg
+    return line1, line2, line3, line4, line5, label_line, label_leg, ax11, line11, hline1, hline2
 
 ani = animation.FuncAnimation(fig, animate, frames=np.arange(0, num_dumps), interval=200)
 

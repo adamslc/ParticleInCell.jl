@@ -2,7 +2,7 @@ using ParticleInCell
 using HDF5
 
 #timestep = 1e-10
-timestep = 1e-8
+timestep = 1e-9
 sim = Simulation(timestep)
 
 sim_length = 1.
