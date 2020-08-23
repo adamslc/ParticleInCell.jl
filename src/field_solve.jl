@@ -158,18 +158,14 @@ function step!(step::FiniteDifferenceToNodes, sim::Simulation)
         output_values[i] = -1 * (input_values[i + 1] - input_values[i - 1]) / (2 * cell_length(grid, i))
     end
 
-    # This doesn't work for guard cells, needs to be fixed ASAP
-    output_values[1] = -1 * (input_values[2] - input_values[end - 1]) / (2 * cell_length(grid, 1))
-    output_values[end] = output_values[1]
-
     # Update guard/periodic cells
-#    for j in 1:grid.num_guard_cells
-#        output_values[j] = output_values[grid.num_cells + j]
-#    end
-#    output_values[grid.num_guard_cells + grid.num_cells + 1] = output_values[grid.num_guard_cells + 1]
-#    for j in 1:grid.num_guard_cells
-#        output_values[grid.num_guard_cells + grid.num_cells + 1 + j] = output_values[grid.num_guard_cells + 1 + j]
-#    end
+    for j in 1:grid.num_guard_cells
+        output_values[j] = output_values[grid.num_cells + j]
+    end
+    output_values[grid.num_guard_cells + grid.num_cells + 1] = output_values[grid.num_guard_cells + 1]
+    for j in 1:grid.num_guard_cells
+        output_values[grid.num_guard_cells + grid.num_cells + 1 + j] = output_values[grid.num_guard_cells + 1 + j]
+    end
 end
 
 """

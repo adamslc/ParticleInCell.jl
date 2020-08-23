@@ -1,14 +1,12 @@
 using ParticleInCell
 using HDF5
 
-#timestep = 1e-10
-timestep = 1e-9
+timestep = 1e-10
 sim = Simulation(timestep)
 
 sim_length = 1.
 num_cells = 32
-num_guard_cells = 0
-#num_guard_cells = 2
+num_guard_cells = 2
 grid = UniformGrid(num_cells=num_cells, num_guard_cells=num_guard_cells, simulation_length=sim_length)
 
 grid_multiplier = 5
@@ -29,15 +27,16 @@ add_field!(sim, rho_hd, "rho_hd")
 electron_charge = -1.602e-19
 electron_mass = 9.109e-31
 particles_per_macro = 10^10
-num_macros = 640
+num_macros = 6400
 positions  = collect(range(0, stop=sim_length, length=num_macros+1))[1:num_macros]
-velocities = 1e5 * sin.(2*pi*2/sim_length .* positions)
+velocities = 1e4 * sin.(2*pi*2/sim_length .* positions)
 forces     = similar(positions)
 electrons = Species(electron_charge, electron_mass, particles_per_macro,
                                       positions, velocities, forces)
 add_species!(sim, electrons, "electrons")
 
 scatter = ScatterChargeToGrid("electrons", "rho")
+#scatter = ScatterChargeToGrid("electrons", "rho", shape_2nd_order)
 add_integration_step!(sim, scatter)
 
 scatter_hd = ScatterChargeToGrid("electrons", "rho_hd")
@@ -51,6 +50,7 @@ finite_diff = FiniteDifferenceToNodes("phi", "elec")
 add_integration_step!(sim, finite_diff)
 
 gather = GatherForcesFromGrid("electrons", "elec")
+#gather = GatherForcesFromGrid("electrons", "elec", shape_2nd_order)
 add_integration_step!(sim, gather)
 
 symplectic_euler = SymplecticEulerPush("electrons")
@@ -61,8 +61,8 @@ add_integration_step!(sim, constrain_species)
 
 setup!(sim)
 
-num_steps = 100
-dump_steps = 1
+num_steps = 1000
+dump_steps = 10
 background_charge_density = -1 * electron_charge * particles_per_macro * num_macros / num_cells
 background_charge_density_hd = -1 * electron_charge * particles_per_macro * num_macros / num_cells_hd
 
