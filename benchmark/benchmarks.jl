@@ -58,3 +58,16 @@ f2 = similar(f1)
 SUITE["field_solve"] = BenchmarkGroup()
 SUITE["field_solve"]["fourier"] =
     @benchmarkable ParticleInCell.fourier_field_solve!(f1, f2, ft_vector, ksq_inv, offset, num_cells)
+
+
+
+
+sim = Simulation(1.)
+s = Species(1., 1., 1, zeros(1000), zeros(1000), zeros(1000))
+add_species!(sim, s, "s")
+p = SymplecticEulerPush("s")
+add_integration_step!(sim, p)
+setup!(sim)
+SUITE["particle_push"] = @benchmarkable step!(sim)
+
+
