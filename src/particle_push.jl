@@ -54,6 +54,12 @@ function step!(step::ConstrainSpecies, sim::Simulation)
     positions = sim.species[step.species_index].positions
     sim_length = simulation_length(step.grid)
 
+    constrain_species!(positions, sim_length)
+
+    return
+end
+
+function constrain_species!(positions, sim_length)
     for i in 1:length(positions)
         if positions[i] >= sim_length
             positions[i] -= sim_length * floor(positions[i] / sim_length)

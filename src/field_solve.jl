@@ -151,9 +151,13 @@ function step!(step::FiniteDifferenceToNodes, sim::Simulation)
     input_values = sim.fields[step.input_field_index].grid_values
     output_values = sim.fields[step.output_field_index].grid_values
     grid = sim.fields[step.input_field_index].grid
-    num_cells = sim.fields[step.input_field_index].grid.num_cells
-    num_guard_cells = sim.fields[step.input_field_index].grid.num_guard_cells
 
+    finite_difference_to_nodes!(input_values, output_values, grid)
+
+    return
+end
+
+function finite_difference_to_nodes!(input_values, output_values, grid)
     for i in 2:length(input_values) - 1
         output_values[i] = -1 * (input_values[i + 1] - input_values[i - 1]) / (2 * cell_length(grid, i))
     end
@@ -166,6 +170,8 @@ function step!(step::FiniteDifferenceToNodes, sim::Simulation)
     for j in 1:grid.num_guard_cells
         output_values[grid.num_guard_cells + grid.num_cells + 1 + j] = output_values[grid.num_guard_cells + 1 + j]
     end
+
+    return
 end
 
 """

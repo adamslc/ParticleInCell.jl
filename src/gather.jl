@@ -30,8 +30,14 @@ function step!(step::GatherForcesFromGrid, sim::Simulation)
     grid = sim.fields[step.field_index].grid
     charge = sim.species[step.species_index].macro_charge
 
+    gather_forces!(forces, positions, field, charge, grid, step.shape_function)
+
+    return
+end
+
+function gather_forces!(forces, positions, field, charge, grid, shape_function)
     for (i, x) in enumerate(positions), (grid_index, grid_pos) in grid
-        forces[i] += charge * field[grid_index] * step.shape_function((x - grid_pos) / cell_length(grid, grid_index))
+        forces[i] += charge * field[grid_index] * shape_function((x - grid_pos) / cell_length(grid, grid_index))
     end
 
     return
