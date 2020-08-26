@@ -34,7 +34,7 @@ end
             grid, 1., shape_function)
 
         # Check for charge conservation
-        @test isapprox(sum(field[3:10]), num_macros)
+        @test isapprox(sum(field[3:10]) * simulation_length / num_cells, num_macros)
 
         # Check that guard/periodic cells are equal to their counterparts
         # within the simulation cell
@@ -44,7 +44,6 @@ end
         @test field[4] == field[12]
         @test field[5] == field[13]
     end
-
 
 
 
@@ -77,7 +76,7 @@ end
 
         # Check charge conservation
         total_charge = num_macros * charge * particles_per_macro
-        @test isapprox(sum(f.grid_values[1:num_cells]), total_charge)
+        @test isapprox(sum(f.grid_values[1:num_cells]) * simulation_length / num_cells, total_charge)
 
         # Check guard/periodic cells
         for j in -num_guard_cells:num_guard_cells
