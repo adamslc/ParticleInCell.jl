@@ -23,3 +23,19 @@ function shape_2nd_order(x)
         return 0
     end
 end
+
+function shape_3rd_order(x)
+    if x < -2
+        return 0.
+    elseif x < -1
+        return @evalpoly(x, 4/3, 2, 1, 1/6)
+    elseif x < 0
+        return @evalpoly(x, 2/3, 0, -1, -1/2)
+    elseif x < 1
+        return @evalpoly(x, 2/3, 0, -1, 1/2)
+    elseif x < 2
+        return @evalpoly(x, 4/3, -2, 1, -1/6)
+    else
+        return 0.
+    end
+end

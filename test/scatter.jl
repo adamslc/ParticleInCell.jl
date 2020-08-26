@@ -2,7 +2,7 @@ using ParticleInCell
 using Test
 
 @testset "Shape functions" begin
-    shape_functions = [shape_1st_order, shape_2nd_order]
+    shape_functions = [shape_1st_order, shape_2nd_order, shape_3rd_order]
 
     for shape_function in shape_functions
         for offset in 0:0.1:1
@@ -26,7 +26,7 @@ end
     num_macros = 100
     positions  = collect(range(0, stop=simulation_length, length=num_macros+1))[1:num_macros]
 
-    shape_functions = [shape_1st_order, shape_2nd_order]
+    shape_functions = [shape_1st_order, shape_2nd_order, shape_3rd_order]
 
     for shape_function in shape_functions
         field .= 0
