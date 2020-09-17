@@ -1,6 +1,6 @@
 module ParticleInCell
 
-using FFTW
+using FFTW, Printf
 
 export UniformGrid, Field, Species, total_cells, cell_length
 export shape_1st_order, shape_2nd_order, shape_3rd_order
@@ -96,26 +96,35 @@ end
 step!(::IntegrationStep, ::Simulation) = throw("No step method")
 
 function print_summary(io::IO, sim::Simulation{FT, IT}) where {FT, IT}
-    println(io, "Simulation{$FT, $IT}")
-    println(io, "Simulation setup ", sim.setup_complete ? "has" : "has not", " been completed.")
-    println(io, "Simulated $(sim.time) seconds using $(sim.num_steps) timesteps".)
-#    println(io, "Total simulation wall time is $(sim.total_time) seconds.")
-#    println(io)
-#    println(io, "  $num_species species")
-#    for s in keys(sim.species_dict)
-#        println(io, "    ", s)
-#    end
-#    println(io)
-#    println(io, "  $num_fields fields")
-#    for f in keys(sim.fields_dict)
-#        println(io, "    ", f)
-#    end
-#    println(io)
-#    println(io, "  $(length(integration_steps)) integration steps")
-#    for (i, s) in enumerate(sim.integration_steps)
-#        println(io, "    $s")
-#        println(io, "      $(sim.integration_times[i]) seconds ($(sim.integration_times[i] / sim.total_time * 100)%)")
-#    end
+    str = "Simulation{$FT, $IT}"
+    print(io, str)
+    if sim.setup_complete
+        printstyled("  [SETUP]\n", color=:green)
+    else
+        printstyled("  [NOT SETUP]\n", color=:red)
+    end
+    println(io, repeat('=', length(str)))
+    println(io, "Simulated $(sim.num_timesteps) timesteps in $(sim.total_time) seconds")
+    str = "Species: $(sim.num_species)"
+    println(io, str)
+    println(io, repeat('=', length(str)))
+    for s in keys(sim.species_dict)
+       println(io, "  ", s)
+    end
+    str = "Fields: $(sim.num_species)"
+    println(io, str)
+    println(io, repeat('=', length(str)))
+    for f in keys(sim.fields_dict)
+       println(io, "  ", f)
+    end
+    str = "Integration steps: $(length(sim.integration_steps))"
+    println(io, str)
+    println(io, repeat('=', length(str)))
+    for (i, s) in enumerate(sim.integration_steps)
+        str = @sprintf("  %s  (%.1f %%)", string(typeof(s)), sim.integration_times[i] / sim.total_time * 100)
+        println(io, str)
+    end
+    println(io, "Overhead: ", (sim.total_time - sum(sim.integration_times)) / sim.total_time)
 end
 
 include("shape_functions.jl")
