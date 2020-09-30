@@ -3,7 +3,7 @@ module ParticleInCell
 using FFTW, Printf
 
 export UniformGrid, Field, Species, total_cells, cell_length
-export shape_1st_order, shape_2nd_order, shape_3rd_order
+export shape_1st_order, shape_2nd_order, shape_3rd_order, shape_4th_order
 export ScatterChargeToGrid, GatherForcesFromGrid, SymplecticEulerPush
 export ConstrainSpecies, FourierFieldSolve, FiniteDifferenceToNodes
 export PrescribeField

@@ -39,3 +39,21 @@ function shape_3rd_order(x)
         return 0.
     end
 end
+
+function shape_4th_order(x)
+    if x < -5/2
+        return 0.
+    elseif x < -3/2
+        return @evalpoly(x, 625/384, 125/48, 25/16, 5/12, 1/24)
+    elseif x < -1/2
+        return @evalpoly(x, 55/96, -5/24, -5/4, -5/6, -1/6)
+    elseif x < 1/2
+        return @evalpoly(x, 115/192, 0, -5/8, 0, 1/4)
+    elseif x < 3/2
+        return @evalpoly(x, 55/96, 5/24, -5/4, 5/6, -1/6)
+    elseif x < 5/2
+        return @evalpoly(x, 625/384, -125/48, 25/16, -5/12, 1/24)
+    else
+        return 0.
+    end
+end
