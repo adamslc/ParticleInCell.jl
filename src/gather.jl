@@ -36,7 +36,7 @@ function step!(step::GatherForcesFromGrid, sim::Simulation)
     charge = step.charge
 
     for (i, x) in enumerate(positions), (grid_index, grid_pos) in grid
-        forces[i] += charge * field[grid_index] * step.shape_function((x - grid_pos) / cell_length(grid, grid_index))
+        forces[i] += charge * field[grid_index] * step.shape_function((grid_pos - x) / cell_length(grid, grid_index))
     end
 
     return

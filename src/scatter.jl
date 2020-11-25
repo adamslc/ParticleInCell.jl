@@ -33,7 +33,7 @@ end
 
 function scatter_charge_to_grid!(positions, field, grid, charge, shape_function)
     for x in positions, (index, grid_pos) in grid
-        field[index] += charge * shape_function((x - grid_pos) / cell_length(grid, index)) / cell_length(grid, index)
+        field[index] += charge * shape_function((grid_pos - x) / cell_length(grid, index)) / cell_length(grid, index)
     end
 
     # Correct for the guard/periodic cells
