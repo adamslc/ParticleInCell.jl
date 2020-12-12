@@ -6,7 +6,7 @@ export UniformGrid, Field, Species, total_cells, cell_length
 export shape_1st_order, shape_2nd_order, shape_3rd_order, shape_4th_order
 export ScatterChargeToGrid, GatherForcesFromGrid, SymplecticEulerPush
 export ConstrainSpecies, FourierFieldSolve, FiniteDifferenceToNodes
-export PrescribeField
+export PrescribeField, ParticleInFourier
 export Simulation, add_species!, add_field!, add_integration_step!, setup!, step!
 
 include("grid.jl")
@@ -133,5 +133,6 @@ include("gather.jl")
 include("particle_push.jl")
 include("field_solve.jl")
 include("prescribe_field.jl")
+include("particle_in_fourier.jl")
 
 end # module
