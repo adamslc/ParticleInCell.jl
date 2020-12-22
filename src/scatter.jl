@@ -7,15 +7,17 @@ mutable struct ScatterChargeToGrid{FT, IT, S} <: IntegrationStep
 
     shape_function::S
     charge::FT
-end
 
-function ScatterChargeToGrid(species_name::String, field_name::String,
-                             shape_function::S=shape_1st_order, charge::FT=0.) where {FT, S}
-    species_index = -1
-    field_index = -1
+    temp_field::Vector{FT}
 
-    return ScatterChargeToGrid{FT, Int, S}(species_name, field_name, species_index,
-                                field_index, shape_function, charge)
+    function ScatterChargeToGrid(species_name::String, field_name::String,
+                                 shape_function::S=shape_1st_order, charge::FT=0.) where {FT, S}
+        species_index = -1
+        field_index = -1
+
+        return new{FT, Int, S}(species_name, field_name, species_index,
+                                    field_index, shape_function, charge)
+    end
 end
 
 function setup!(step::ScatterChargeToGrid{FT}, sim::Simulation) where {FT}
@@ -25,6 +27,8 @@ function setup!(step::ScatterChargeToGrid{FT}, sim::Simulation) where {FT}
     if step.charge == zero(FT)
         step.charge = sim.species[step.species_index].macro_charge
     end
+
+    step.temp_field = similar(sim.fields[step.field_index].grid_values)
 end
 
 function step!(step::ScatterChargeToGrid, sim::Simulation)
@@ -33,7 +37,11 @@ function step!(step::ScatterChargeToGrid, sim::Simulation)
     grid = sim.fields[step.field_index].grid
     charge = step.charge
 
-    scatter_charge_to_grid!(positions, field, grid, charge, step.shape_function)
+    step.temp_field .= 0
+
+    scatter_charge_to_grid!(positions, step.temp_field, grid, charge, step.shape_function)
+
+    field .+= step.temp_field
 end
 
 function scatter_charge_to_grid!(positions, field, grid, charge, shape_function)
