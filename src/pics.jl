@@ -19,6 +19,7 @@ mutable struct CubicSplineFieldSolve{FT, IT} <: IntegrationStep
     sim_length::FT
 
     ksq_inv::Vector{FT}
+    c_k::Vector{FT}
 
     function CubicSplineFieldSolve(rho0_name::String, rho2_name::String,
                                    phi0_name::String, phi2_name::String,
@@ -45,12 +46,15 @@ function setup!(step::CubicSplineFieldSolve, sim::Simulation)
     num_cells = grid.num_cells
     cell_length = grid.cell_length
     step.ksq_inv = Vector{Float64}(undef, round(Int, 1 + num_cells / 2))
+    step.c_k = Vector{Float64}(undef, round(Int, 1 + num_cells / 2))
     for i in 1:round(Int, 1 + num_cells / 2)
         k = 2 * pi * i / step.sim_length
         # grid_angle can alternatively be computed as i * pi / num_cells. I
         # don't do this for intuitions sake.
         grid_angle = k * cell_length / 2
-        step.ksq_inv[i] = (cell_length / (2 * sin(grid_angle)))^2 / step.epsilon_0
+        # step.ksq_inv[i] = (cell_length / (2 * sin(grid_angle)))^2 / step.epsilon_0
+        step.ksq_inv[i] = 1 / (k^2 * step.epsilon_0)
+        step.c_k[i] = (-12 / cell_length^2) * sin(grid_angle)^2 / (2 + cos(2 * grid_angle))
     end
 end
 
@@ -97,18 +101,18 @@ function step!(step::CubicSplineFieldSolve, sim::Simulation)
         k = 2 * pi * i / step.sim_length
         k1 = i + 1
         k2 = num_cells + 1 - i
-        step.ft_vector1[k1] = (step.ft_vector1[k1] - k^2 * step.ft_vector2[k1]) * step.ksq_inv[i]
+        step.ft_vector1[k1] = (step.ft_vector1[k1] + step.c_k[i] * step.ft_vector2[k1]) * step.ksq_inv[i]
         k1 == k2 && break
-        step.ft_vector1[k2] = (step.ft_vector1[k2] - k^2 * step.ft_vector2[k2]) * step.ksq_inv[i]
+        step.ft_vector1[k2] = (step.ft_vector1[k2] + step.c_k[i] * step.ft_vector2[k2]) * step.ksq_inv[i]
     end
 
     for i in 1:round(Int, num_cells / 2)
         k = 2 * pi * i / step.sim_length
         k1 = i + 1
         k2 = num_cells + 1 - i
-        step.ft_vector2[k1] = -1 * k^2 * step.ft_vector1[k1]
+        step.ft_vector2[k1] = step.c_k[i] * step.ft_vector1[k1]
         k1 == k2 && break
-        step.ft_vector2[k2] = -1 * k^2 * step.ft_vector1[k2]
+        step.ft_vector2[k2] = step.c_k[i] * step.ft_vector1[k2]
     end
 
     # Compute phi inverses in place
