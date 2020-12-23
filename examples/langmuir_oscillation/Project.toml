@@ -1,5 +1,0 @@
-[deps]
-HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
-Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
-MakieLayout = "5a521ce4-ebb9-4793-b5b7-b334dfe8393c"
-ParticleInCell = "3e424eec-de35-11ea-286b-93bc20c5ff73"
