@@ -49,3 +49,37 @@ function Base.iterate(g::UniformGrid, state=(1, -g.num_guard_cells))
 end
 
 Base.length(g::UniformGrid) = g.num_cells + 2*g.num_guard_cells + 1
+
+"""
+    FrequencyGrid(grid::UniformGrid)
+
+Given a `UniformGrid` `grid`, stores the Fourier Transform components of values
+on `grid`.
+"""
+struct FrequencyGrid{CFT, FT, IT} <: AbstractGrid{CFT, IT}
+    grid::UniformGrid
+
+    num_cells::IT
+
+    simulation_length::FT
+    cell_length::FT
+end
+
+function FrequencyGrid(grid::UniformGrid{FT, IT}) where {FT, IT}
+    return FrequencyGrid{Complex{FT}, FT, IT}(grid, grid.num_cells, grid.simulation_length, grid.cell_length)
+end
+
+simulation_length(g::FrequencyGrid) = g.simulation_length
+cell_length(g::FrequencyGrid, i=0) = g.cell_length
+total_cells(g::FrequencyGrid) = g.num_cells
+
+# TODO: This should be reworked to return actual frequency values
+function Base.iterate(g::FrequencyGrid, state=(0, 0))
+    if state[1] == g.num_cells
+        return nothing
+    end
+
+    return ((state[1], state[2]*g.cell_length), (state[1]+1, state[2]+1))
+end
+
+Base.length(g::FrequencyGrid) = g.num_cells

@@ -62,8 +62,7 @@ function add_species!(sim::Simulation{FT, IT}, species::Species{FT, IT},
     sim.species_dict[label] = sim.num_species
 end
 
-function add_field!(sim::Simulation{FT, IT}, field::Field{FT},
-                      label::String) where {FT, IT}
+function add_field!(sim::Simulation, field::Field, label::String)
     push!(sim.fields, field)
     sim.num_fields += 1
     sim.fields_dict[label] = sim.num_fields
