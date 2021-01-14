@@ -14,18 +14,25 @@ function setup!(step::SymplecticEulerPush, sim::Simulation)
     step.species_index = sim.species_dict[step.species_name]
 end
 
-function step!(step::SymplecticEulerPush, sim::Simulation)
+function step!(step::SymplecticEulerPush{IT}, sim::Simulation{FT, IT}) where {FT, IT}
     positions = sim.species[step.species_index].positions
     velocities = sim.species[step.species_index].velocities
     forces = sim.species[step.species_index].forces
     mass = sim.species[step.species_index].macro_mass
     timestep = sim.timestep
 
-    velocities .+= (sim.timestep / mass) .* forces
+    symplectic_euler_push!(positions, velocities, forces, mass, timestep)
+
+    return
+end
+
+function symplectic_euler_push!(positions, velocities, forces, mass, timestep)
+    velocities .+= (timestep / mass) .* forces
     positions  .+= timestep .* velocities
 
     return
 end
+
 
 mutable struct ConstrainSpecies{IT, G} <: IntegrationStep
     species_name::String
@@ -47,6 +54,12 @@ function step!(step::ConstrainSpecies, sim::Simulation)
     positions = sim.species[step.species_index].positions
     sim_length = simulation_length(step.grid)
 
+    constrain_species!(positions, sim_length)
+
+    return
+end
+
+function constrain_species!(positions, sim_length)
     for i in 1:length(positions)
         if positions[i] >= sim_length
             positions[i] -= sim_length * floor(positions[i] / sim_length)
