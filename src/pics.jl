@@ -13,6 +13,8 @@ mutable struct CubicSplineFieldSolve{FT, IT} <: IntegrationStep
 
     epsilon_0::FT
 
+    max_wavenumber::IT
+
     ft_vector1::Vector{Complex{FT}}
     ft_vector2::Vector{Complex{FT}}
 
@@ -23,10 +25,8 @@ mutable struct CubicSplineFieldSolve{FT, IT} <: IntegrationStep
 
     function CubicSplineFieldSolve(rho0_name::String, rho2_name::String,
                                    phi0_name::String, phi2_name::String,
-                                   epsilon_0::FT) where FT
-        IT = Int
-
-        new{FT, IT}(rho0_name, rho2_name, phi0_name, phi2_name, -1, -1, -1, -1, epsilon_0)
+                                   epsilon_0::FT, max_wavenumber::IT=Inf) where {FT, IT}
+        new{FT, IT}(rho0_name, rho2_name, phi0_name, phi2_name, -1, -1, -1, -1, epsilon_0, max_wavenumber)
     end
 end
 
@@ -55,6 +55,10 @@ function setup!(step::CubicSplineFieldSolve, sim::Simulation)
         # step.ksq_inv[i] = (cell_length / (2 * sin(grid_angle)))^2 / step.epsilon_0
         step.ksq_inv[i] = 1 / (k^2 * step.epsilon_0)
         step.c_k[i] = (-12 / cell_length^2) * sin(grid_angle)^2 / (2 + cos(2 * grid_angle))
+
+        if i > step.max_wavenumber
+            step.ksq_inv[i] = 0
+        end
     end
 end
 
