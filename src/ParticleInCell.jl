@@ -134,5 +134,6 @@ include("field_solve.jl")
 include("prescribe_field.jl")
 include("particle_in_fourier.jl")
 include("pics.jl")
+include("filters.jl")
 
 end # module
