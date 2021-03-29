@@ -1,4 +1,4 @@
-mutable struct FourierFieldSolve{FT, IT} <: IntegrationStep
+mutable struct FourierFieldSolve{FT, IT, KVT} <: IntegrationStep
     input_field_name::String
     output_field_name::String
 
@@ -10,10 +10,13 @@ mutable struct FourierFieldSolve{FT, IT} <: IntegrationStep
 
     epsilon_0::FT
 
+    rhok::KVT
+    phik::KVT
+
     function FourierFieldSolve(input_field_name::String, output_field_name::String,
-                               epsilon_0::FT) where FT
-        return new{FT, Int}(input_field_name, output_field_name, -1, -1,
-                            Vector{FT}(), Vector{Complex{FT}}(), epsilon_0)
+                               epsilon_0::FT, rhok::KVT=nothing, phik::KVT=nothing) where {FT, KVT}
+        return new{FT, Int, KVT}(input_field_name, output_field_name, -1, -1,
+                            Vector{FT}(), Vector{Complex{FT}}(), epsilon_0, rhok, phik)
     end
 end
 
@@ -41,7 +44,7 @@ function setup!(step::FourierFieldSolve, sim::Simulation)
     end
 end
 
-function step!(step::FourierFieldSolve, sim::Simulation)
+function step!(step::FourierFieldSolve{FT, IT, KVT}, sim::Simulation) where {FT, IT, KVT}
     input_values = sim.fields[step.input_field_index].grid_values
     output_values = sim.fields[step.output_field_index].grid_values
     grid = sim.fields[step.input_field_index].grid
@@ -57,6 +60,10 @@ function step!(step::FourierFieldSolve, sim::Simulation)
     # Compute FFT in place
     fft!(step.ft_vector)
 
+    if KVT != Nothing
+        step.rhok .= step.ft_vector
+    end
+
     # Modifiy ft_vector to get phi(k)
     # This mode should be zero if the simulation cell is charge neutral. We
     # assume that it is here.
@@ -71,6 +78,10 @@ function step!(step::FourierFieldSolve, sim::Simulation)
         step.ft_vector[k1] = step.ksq_inv[i] * step.ft_vector[k1]
         k1 == k2 && break
         step.ft_vector[k2] = step.ksq_inv[i] * step.ft_vector[k2]
+    end
+
+    if KVT != Nothing
+        step.phik .= step.ft_vector
     end
 
     # Compute IFFT in place
